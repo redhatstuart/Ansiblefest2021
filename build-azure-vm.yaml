@@ -1,0 +1,87 @@
+- name: Create an Azure Virtual Machine and required supporting infrastructure
+  hosts: localhost
+  connection: local
+  vars_files:
+    - ./vars-myvars.yml
+
+  tasks:
+
+  - name: First make sure that our resource group doesn't exist
+    azure.azcollection.azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+      force: yes
+      state: absent
+
+  - name: Create a new resource group which will contain our virtual machine and its associated components
+    azure.azcollection.azure_rm_resourcegroup:
+      name: "{{ resource_group }}"
+      location: "{{ location }}"
+
+  - name: Create the virtual network that this virtual machine will connect to
+    azure.azcollection.azure_rm_virtualnetwork:
+      resource_group: '{{ resource_group }}'
+      name: "{{ vm_name }}-vnet"
+      address_prefixes: "10.10.0.0/16"
+
+  - name: Create a subnet within the virtual network just established
+    azure.azcollection.azure_rm_subnet:
+      resource_group: '{{ resource_group }}'
+      name: "{{ vm_name }}-subnet"
+      address_prefix: "10.10.40.0/24"
+      virtual_network: "{{ vm_name }}-vnet"
+
+  - name: Create Virutal Machine Public IP Address
+    azure.azcollection.azure_rm_publicipaddress:
+      resource_group: '{{ resource_group }}'
+      name: "{{ vm_name }}-pip-{{ rnum }}"
+      allocation_method: Static
+      domain_name: '{{ vm_name }}-{{ rnum }}'
+
+  - name: Create Virtual Machine Network Security Group
+    azure.azcollection.azure_rm_securitygroup:
+      resource_group: '{{ resource_group }}'
+      name: '{{ vm_name }}-nsg'
+      rules:
+          - name: 'AllowSSH'
+            access: Allow
+            destination_port_range: 22
+            direction: Inbound
+            priority: 1001
+            protocol: Tcp
+
+  - name: Create Virtual Machine Network Interface Card
+    azure.azcollection.azure_rm_networkinterface:
+      name: "{{ vm_name }}-nic"
+      os_type: Linux
+      resource_group: '{{ resource_group }}'
+      security_group_name: '{{ vm_name }}-nsg'
+      subnet_name: "{{ vm_name }}-subnet"
+      virtual_network_name: "{{ vm_name }}-vnet"
+      ip_configurations:
+        - name: ipconfig1
+          primary: True
+          public_ip_address_name: "{{ vm_name }}-pip-{{ rnum }}"
+          public_ip_allocation_method: Dynamic
+          private_ip_allocation_method: Dynamic
+
+  - name: Create Virtual Machine
+    azure.azcollection.azure_rm_virtualmachine:
+      admin_username: "{{ admin_username }}"
+      managed_disk_type: Premium_LRS
+      name: '{{ vm_name }}-vm'
+      network_interface_names: "{{ vm_name }}-master-nic"
+      os_type: Linux
+      resource_group: '{{ resource_group }}'
+      short_hostname: '{{ vm_name }}'
+      vm_size: Standard_DS4_v3
+      ssh_password_enabled: false
+      ssh_public_keys:
+        - path: /home/{{ admin_username }}/.ssh/authorized_keys
+          key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      image:
+        offer: "RHEL"
+        publisher: "RedHat"
+        sku: "8-LVM"
+        version: "latest"
+
