@@ -86,5 +86,5 @@
 
   - name: Output VM FQDN
     debug:
-    msg: "You can connect to your new VM with: ssh {{ output.publicipaddresses[0].dns_settings.fqdn }}"
+      msg: "You can connect to your new VM with: ssh {{ output.publicipaddresses[0].dns_settings.fqdn }}"
 
