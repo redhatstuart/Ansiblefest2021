@@ -58,6 +58,12 @@
           public_ip_allocation_method: Dynamic
           private_ip_allocation_method: Dynamic
 
+  - name: Get Network FQDN
+    azure.azcollection.azure_rm_publicipaddress_info:
+      resource_group: '{{ resource_group }}'
+      name: '{{ vm_name }}-pip-{{ rnum }}'
+    register: output
+
   - name: Create Virtual Machine
     azure.azcollection.azure_rm_virtualmachine:
       admin_username: "{{ admin_username }}"
@@ -77,4 +83,8 @@
         publisher: "RedHat"
         sku: "8-LVM"
         version: "latest"
+
+  - name: Output VM FQDN
+    debug:
+    msg: "You can connect to your new VM with: ssh {{ output.publicipaddresses[0].dns_settings.fqdn }}"
 
