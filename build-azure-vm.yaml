@@ -6,13 +6,6 @@
 
   tasks:
 
-  - name: First make sure that our resource group doesn't exist
-    azure.azcollection.azure_rm_resourcegroup:
-      name: "{{ resource_group }}"
-      location: "{{ location }}"
-      force: yes
-      state: absent
-
   - name: Create a new resource group which will contain our virtual machine and its associated components
     azure.azcollection.azure_rm_resourcegroup:
       name: "{{ resource_group }}"
