@@ -1,0 +1,22 @@
+---
+#
+# Ansiblefest 2021
+#
+#
+resource_group: "MY_RESOURCE_GROUP"
+
+# Asset Prefix
+vm_name: "MYVM"
+
+# Azure Data Center
+location: "MYAZUREDATACENTER"
+
+# The admin username that you would like to use for all of your VM assets. You will likely not need to connect to them.
+admin_username: "MYUSERNAME"
+
+# Random Generated Number
+rnum: "MYRANDOM"
+
+# Complex Password
+admin_password: "MuABCPassword!!@123"
+
