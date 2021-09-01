@@ -12,7 +12,7 @@ fi
 
 # Variables
 RANDNUM="$(shuf -i 20000-50000 -n 1)"
-RG="ansiblefest2021"
+RG="my-first-vm"
 USERNAME="$(whoami)"
 VMNAME="$(echo $USERNAME | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]//g' | cut -c 1-15)"
 AZUREDC="$(cat ../az.region)"
