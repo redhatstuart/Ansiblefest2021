@@ -67,7 +67,7 @@
       os_type: Linux
       resource_group: '{{ resource_group }}'
       short_hostname: '{{ vm_name }}'
-      vm_size: Standard_DS4_v3
+      vm_size: Standard_D4s_v3
       ssh_password_enabled: false
       ssh_public_keys:
         - path: /home/{{ admin_username }}/.ssh/authorized_keys
