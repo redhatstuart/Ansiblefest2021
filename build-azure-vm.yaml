@@ -62,8 +62,8 @@
     azure.azcollection.azure_rm_virtualmachine:
       admin_username: "{{ admin_username }}"
       managed_disk_type: Premium_LRS
-      name: '{{ vm_name }}-vm'
-      network_interface_names: "{{ vm_name }}-master-nic"
+      name: '{{ vm_name }}'
+      network_interface_names: "{{ vm_name }}-nic"
       os_type: Linux
       resource_group: '{{ resource_group }}'
       short_hostname: '{{ vm_name }}'
